@@ -9,11 +9,15 @@ from friends.models import Friendship, FriendshipRequest, User
 def get_all(user: User) -> QuerySet | None:
     right_friends, left_friends = None, None
     try:
-        right_friends = Friendship.objects.filter(friend_1=user).values("friend_2").annotate(friend=F("friend_2"))
+        right_friends = (
+            Friendship.objects.filter(friend_1=user).values("friend_2").annotate(friend=F("friend_2"))
+        )
     except Friendship.DoesNotExist:
         pass
     try:
-        left_friends = Friendship.objects.filter(friend_2=user).values("friend_1").annotate(friend=F("friend_1"))
+        left_friends = (
+            Friendship.objects.filter(friend_2=user).values("friend_1").annotate(friend=F("friend_1"))
+        )
     except Friendship.DoesNotExist:
         pass
     if not right_friends and not left_friends:
@@ -44,13 +48,30 @@ def check_status(cur_user: User, other_id: int):
         other_user = User.objects.get(id=other_id)
     except User.DoesNotExist:
         return {"success": False, "message": "user does not exist"}
-    if FriendshipRequest.objects.filter(from_user=cur_user,
-                                        to_user=other_user).exists():
+    if FriendshipRequest.objects.filter(from_user=cur_user, to_user=other_user).exists():
         return {"success": True, "message": FriendshipStatus.OUTGOING_REQUEST}
-    if FriendshipRequest.objects.filter(from_user=other_user,
-                                        to_user=cur_user).exists():
+    if FriendshipRequest.objects.filter(
+            from_user=other_user, to_user=cur_user
+    ).exists():
         return {"success": True, "message": FriendshipStatus.INCOMING_REQUEST}
     if Friendship.objects.filter(
-            Q(friend_1=cur_user, friend_2=other_user) | Q(friend_1=other_id, friend_2=cur_user)).exists():
+            Q(friend_1=cur_user, friend_2=other_user) | Q(friend_1=other_id, friend_2=cur_user)
+    ).exists():
         return {"success": True, "message": FriendshipStatus.FRIENDS}
     return {"success": True, "message": FriendshipStatus.UNRELATED}
+
+
+def delete_friendship(cur_user: User, other_id: int):
+    try:
+        other_user = User.objects.get(id=other_id)
+    except User.DoesNotExist:
+        return {"success": False, "message": "user does not exist"}
+    left_friendship_exists = Friendship.objects.filter(friend_1=cur_user, frind_2=other_user).exists()
+    right_friendship_exists = Friendship.objects.filter(friend_1=other_user, friend_2=cur_user).exists()
+    if not left_friendship_exists and not right_friendship_exists:
+        return {"success": False, "message": "friendship does not exist"}
+    if left_friendship_exists:
+        Friendship.objects.filter(friend_1=cur_user, frind_2=other_user).delete()
+    else:
+        Friendship.objects.filter(friend_1=other_user, frind_2=cur_user).delete()
+    return {"success": True, "message": "friendship deleted"}

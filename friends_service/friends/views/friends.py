@@ -21,7 +21,6 @@ def ping(request):
 @permission_classes([IsAuthenticated])
 def all_friends(request):
     friends = friendships.get_all(request.user)
-    print(friends)
     if not friends:
         return Response(status=status.HTTP_404_NOT_FOUND)
     serializer = UserNoPasswordSerializer(friends, many=True)
@@ -34,6 +33,17 @@ def all_friends(request):
 def check_status(request):
     other_id = int(request.POST.get("id"))
     result = friendships.check_status(request.user, other_id)
+    if result["success"]:
+        return Response(status=status.HTTP_200_OK, data=result)
+    return Response(status=status.HTTP_404_NOT_FOUND, data=result)
+
+
+@api_view(["DELETE"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete(request):
+    other_id = int(request.POST.get("id"))
+    result = friendships.delete_friendship(request.user, other_id)
     if result["success"]:
         return Response(status=status.HTTP_200_OK, data=result)
     return Response(status=status.HTTP_404_NOT_FOUND, data=result)
