@@ -1,8 +1,9 @@
-from friends.models import User, FriendshipRequest, Friendship
-from django.db.models import QuerySet
-from django.db.models import Q, F
 from enum import Enum
 from typing import Literal
+
+from django.db.models import F, Q, QuerySet
+
+from friends.models import Friendship, FriendshipRequest, User
 
 
 def get_all(user: User) -> QuerySet | None:

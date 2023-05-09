@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
-from friends.serializers import UserSerializer
 from rest_framework import permissions
 from rest_framework.generics import CreateAPIView
+
+from friends.serializers import UserSerializer
 
 
 class CreateUserView(CreateAPIView):

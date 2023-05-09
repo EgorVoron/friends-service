@@ -1,8 +1,7 @@
-from django.urls import path
-from friends import views
-
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework import routers
+
+from friends import views
 
 # requests_router = routers.DefaultRouter()
 # requests_router.register(r'incoming', views.incoming_requests, basename='incoming')
