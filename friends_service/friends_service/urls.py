@@ -24,5 +24,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/register", CreateUserView.as_view()),
     path("auth/token/login", auth_views.obtain_auth_token),
-    path("friends/", include("friends.urls")),
+    path("/api/v1/friends/", include("friends.urls")),
 ]
