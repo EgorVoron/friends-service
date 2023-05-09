@@ -10,11 +10,6 @@ from friends.serializers import FriendshipRequestsSerializer, UserNoPasswordSeri
 
 
 @api_view(["GET"])
-def ping(request):
-    return HttpResponse("pong")
-
-
-@api_view(["GET"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def incoming_requests(request):
@@ -40,19 +35,7 @@ def outgoing_requests(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def send_request(request):
-    result = friendship_requests.send(request.user, request.POST.get("to_id"))
+    result = friendship_requests.send(request.user, int(request.POST.get("to_id")))
     if result["success"]:
         return Response(status=status.HTTP_201_CREATED, data=result)
     return Response(status=status.HTTP_400_BAD_REQUEST, data=result)
-
-
-@api_view(["GET"])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def all_friends(request):
-    friends = friendships.get_all(request.user)
-    print(friends)
-    if not friends:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    serializer = UserNoPasswordSerializer(friends, many=True)
-    return Response(serializer.data)

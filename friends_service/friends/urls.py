@@ -12,5 +12,6 @@ urlpatterns = [
     path('requests/outgoing', views.outgoing_requests),
     path('requests/send', views.send_request),
 
-    path('all', views.all_friends)
+    path('all', views.all_friends),
+    path('check_status', views.check_status)
 ]
