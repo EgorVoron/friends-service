@@ -22,7 +22,7 @@ def ping(request):
 def all_friends(request):
     friends = friendships.get_all(request.user)
     if not friends:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(serialize_user_info(friends))
 
 
@@ -34,7 +34,7 @@ def check_status(request):
     result = friendships.check_status(request.user, other_id)
     if result["success"]:
         return Response(status=status.HTTP_200_OK, data=result)
-    return Response(status=status.HTTP_404_NOT_FOUND, data=result)
+    return Response(status=status.HTTP_400_BAD_REQUEST, data=result)
 
 
 @api_view(["DELETE"])
@@ -45,4 +45,4 @@ def delete(request):
     result = friendships.delete_friendship(request.user, other_id)
     if result["success"]:
         return Response(status=status.HTTP_200_OK, data=result)
-    return Response(status=status.HTTP_404_NOT_FOUND, data=result)
+    return Response(status=status.HTTP_400_BAD_REQUEST, data=result)

@@ -14,7 +14,7 @@ from friends.services import friendship_requests
 def incoming_requests(request):
     requesters = friendship_requests.get_incoming(request.user)
     if not requesters:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(serialize_user_info(requesters))
 
 
@@ -24,7 +24,7 @@ def incoming_requests(request):
 def outgoing_requests(request):
     requested = friendship_requests.get_outgoing(request.user)
     if not requested:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(serialize_user_info(requested))
 
 
@@ -32,7 +32,7 @@ def outgoing_requests(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def send_request(request):
-    result = friendship_requests.send(request.user, int(request.POST.get("to_id")))
+    result = friendship_requests.send(request.user, int(request.POST.get("id")))
     if result["success"]:
         return Response(status=status.HTTP_201_CREATED, data=result)
     return Response(status=status.HTTP_400_BAD_REQUEST, data=result)
@@ -41,18 +41,18 @@ def send_request(request):
 @api_view(["POST"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def accept(request):
-    result = friendship_requests.accept(request.user, int(request.POST.get("to_id")))
+def accept_request(request):
+    result = friendship_requests.accept(from_id=int(request.POST.get("id")), to_user=request.user)
     if result["success"]:
-        return Response(status=status.HTTP_201_CREATED, data=result)
+        return Response(status=status.HTTP_200_OK, data=result)
     return Response(status=status.HTTP_400_BAD_REQUEST, data=result)
 
 
 @api_view(["POST"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def decline(request):
-    result = friendship_requests.decline(request.user, int(request.POST.get("to_id")))
+def decline_request(request):
+    result = friendship_requests.decline(int(request.POST.get("id")), request.user)
     if result["success"]:
-        return Response(status=status.HTTP_201_CREATED, data=result)
+        return Response(status=status.HTTP_200_OK, data=result)
     return Response(status=status.HTTP_400_BAD_REQUEST, data=result)

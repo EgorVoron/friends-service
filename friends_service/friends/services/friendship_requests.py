@@ -30,7 +30,7 @@ def send(from_user: User, to_id: int):
         return {"success": False, "message": "user does not exist"}
     if FriendshipRequest.objects.filter(from_user=from_user,
                                         to_user=to_user).exists():
-        return {"success": False, "message": "request already exists"}
+        return {"success": False, "message": "friendship request already exists"}
     if Friendship.objects.filter(
             Q(friend_1=from_user, friend_2=to_user) | Q(friend_1=to_user, friend_2=from_user)).exists():
         return {"success": False, "message": "friendship already exists"}
@@ -44,11 +44,11 @@ def send(from_user: User, to_id: int):
     return {"success": True, "message": "friendship request created"}
 
 
-def accept(from_user: User, to_id: int):
+def accept(from_id: int, to_user: User):
     try:
-        to_user: User = User.objects.get(id=to_id)
+        from_user: User = User.objects.get(id=from_id)
     except User.DoesNotExist:
-        return {"success": False, "message": "user does not exist"}
+        return {"success": False, "message": "user does not exist"}  # not to befriend removed user
     if not FriendshipRequest.objects.filter(from_user=from_user,
                                             to_user=to_user).exists():
         return {"success": False, "message": "friendship request does not exist"}
@@ -58,11 +58,11 @@ def accept(from_user: User, to_id: int):
     return {"success": True, "message": "friendship request accepted"}
 
 
-def decline(from_user: User, to_id: int):
+def decline(from_id: int, to_user: User):
     try:
-        to_user: User = User.objects.get(id=to_id)
+        from_user: User = User.objects.get(id=from_id)
     except User.DoesNotExist:
-        return {"success": False, "message": "user does not exist"}
+        return {"success": False, "message": "user does not exist"}  # not to befriend removed user
     if not FriendshipRequest.objects.filter(from_user=from_user,
                                             to_user=to_user).exists():
         return {"success": False, "message": "friendship request does not exist"}

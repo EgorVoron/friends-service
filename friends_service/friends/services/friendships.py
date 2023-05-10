@@ -58,12 +58,12 @@ def delete_friendship(cur_user: User, other_id: int):
         other_user = User.objects.get(id=other_id)
     except User.DoesNotExist:
         return {"success": False, "message": "user does not exist"}
-    left_friendship_exists = Friendship.objects.filter(friend_1=cur_user, frind_2=other_user).exists()
+    left_friendship_exists = Friendship.objects.filter(friend_1=cur_user, friend_2=other_user).exists()
     right_friendship_exists = Friendship.objects.filter(friend_1=other_user, friend_2=cur_user).exists()
     if not left_friendship_exists and not right_friendship_exists:
         return {"success": False, "message": "friendship does not exist"}
     if left_friendship_exists:
-        Friendship.objects.filter(friend_1=cur_user, frind_2=other_user).delete()
+        Friendship.objects.filter(friend_1=cur_user, friend_2=other_user).delete()
     else:
         Friendship.objects.filter(friend_1=other_user, frind_2=cur_user).delete()
     return {"success": True, "message": "friendship deleted"}
