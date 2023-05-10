@@ -11,5 +11,7 @@ urlpatterns = [
 
     path('all', views.all_friends),
     path('check_status', views.check_status),
-    path('delete', views.delete)
+    path('delete', views.delete),
+
+    path('ping', views.ping)
 ]
