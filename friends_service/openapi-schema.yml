@@ -8,7 +8,7 @@ paths:
     get:
       operationId: listincoming_requests
       description: 'Incoming friendship requests'
-      parameters: []
+      parameters: [ ]
       responses:
         '200':
           content:
@@ -21,12 +21,12 @@ paths:
         '204':
           description: 'No incoming requests'
       tags:
-      - api/v1/friends/requests
+        - api/v1/friends/requests
   /api/v1/friends/requests/outgoing:
     get:
       operationId: listoutgoing_requests
       description: 'Outgoing friendship requests'
-      parameters: []
+      parameters: [ ]
       responses:
         '200':
           content:
@@ -39,7 +39,7 @@ paths:
         '204':
           description: 'No outgoing requests'
       tags:
-      - api/v1/friends/requests
+        - api/v1/friends/requests
   /api/v1/friends/requests/send:
     post:
       operationId: createsend_request
@@ -88,6 +88,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Result'
+          description: 'Not OK'
       tags:
         - api/v1/friends/requests
   /api/v1/friends/requests/decline:
@@ -113,13 +114,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Result'
+          description: 'Not OK'
       tags:
         - api/v1/friends/requests
   /api/v1/friends/all:
     get:
       operationId: listall_friends
       description: 'Get all friends'
-      parameters: []
+      parameters: [ ]
       responses:
         '200':
           content:
@@ -132,7 +134,7 @@ paths:
         '204':
           description: 'No friends'
       tags:
-      - api/v1/friends
+        - api/v1/friends
   /api/v1/friends/check_status:
     get:
       operationId: listcheck_status
@@ -158,7 +160,7 @@ paths:
                 $ref: '#/components/schemas/Result'
           description: 'Not OK'
       tags:
-      - api/v1/friends
+        - api/v1/friends
   /api/v1/friends/delete:
     delete:
       operationId: destroydelete
@@ -166,7 +168,7 @@ paths:
       parameters:
         - name: id
           in: query
-          description: 'id of user to check info about'
+          description: 'id of user to delete'
           required: true
           schema:
             type: integer
@@ -189,7 +191,7 @@ paths:
     post:
       operationId: createUser
       description: ''
-      parameters: []
+      parameters: [ ]
       requestBody:
         content:
           application/json:
@@ -209,12 +211,12 @@ paths:
                 $ref: '#/components/schemas/User'
           description: ''
       tags:
-      - auth
+        - auth
   /auth/token/login:
     post:
       operationId: createAuthToken
       description: ''
-      parameters: []
+      parameters: [ ]
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -234,7 +236,7 @@ paths:
                 $ref: '#/components/schemas/AuthToken'
           description: ''
       tags:
-      - auth
+        - auth
 components:
   schemas:
     Result:
@@ -269,8 +271,8 @@ components:
           type: string
           writeOnly: true
       required:
-      - username
-      - password
+        - username
+        - password
     AuthToken:
       type: object
       properties:
@@ -284,5 +286,5 @@ components:
           type: string
           readOnly: true
       required:
-      - username
-      - password
+        - username
+        - password
