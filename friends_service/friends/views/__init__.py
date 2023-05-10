@@ -1,2 +1,2 @@
-from friends.views.friends import *
-from friends.views.requests import *
+from friends.views.friends_views import *
+from friends.views.requests_views import *
