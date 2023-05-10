@@ -1,5 +1,6 @@
 <h1>friends-service</h1>
 Сервис для добавления людей в друзья.
+OpenAPI-схема: [friends_service/openapi-schema.yml](friends_service/openapi-schema.yml)
 
 <h3>Запуск</h3>
 
