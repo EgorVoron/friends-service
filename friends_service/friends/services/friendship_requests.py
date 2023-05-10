@@ -5,8 +5,8 @@ from friends.models import Friendship, FriendshipRequest, User
 
 def get_incoming(to_user: User) -> QuerySet | None:
     try:
-        queryset: QuerySet = FriendshipRequest.objects.filter(to_user=to_user).values_list("to_user__id",
-                                                                                           "to_user__username")
+        queryset: QuerySet = FriendshipRequest.objects.filter(to_user=to_user).values_list("from_user__id",
+                                                                                           "from_user__username")
     except FriendshipRequest.DoesNotExist:
         return None
     return queryset
@@ -14,8 +14,8 @@ def get_incoming(to_user: User) -> QuerySet | None:
 
 def get_outgoing(from_user: User) -> QuerySet | None:
     try:
-        queryset: QuerySet = FriendshipRequest.objects.filter(from_user=from_user).values_list("from_user__id",
-                                                                                               "from_user__username")
+        queryset: QuerySet = FriendshipRequest.objects.filter(from_user=from_user).values_list("to_user__id",
+                                                                                               "to_user__username")
     except FriendshipRequest.DoesNotExist:
         return None
     return queryset
