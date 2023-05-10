@@ -4,8 +4,7 @@ from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
-from friends.serializers import FriendshipRequestsSerializer
+from friends.serializers import serialize_user_info
 from friends.services import friendship_requests
 
 
@@ -13,22 +12,20 @@ from friends.services import friendship_requests
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def incoming_requests(request):
-    requests = friendship_requests.get_incoming(request.user)
-    if not requests:
+    requesters = friendship_requests.get_incoming(request.user)
+    if not requesters:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    serializer = FriendshipRequestsSerializer(requests, many=True)
-    return Response(serializer.data)
+    return Response(serialize_user_info(requesters))
 
 
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def outgoing_requests(request):
-    requests = friendship_requests.get_outgoing(request.user)
-    if not requests:
+    requested = friendship_requests.get_outgoing(request.user)
+    if not requested:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    serializer = FriendshipRequestsSerializer(requests, many=True)
-    return Response(serializer.data)
+    return Response(serialize_user_info(requested))
 
 
 @api_view(["POST"])

@@ -6,7 +6,7 @@ from rest_framework.decorators import (api_view, authentication_classes,
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from friends.serializers import UserNoPasswordSerializer
+from friends.serializers import serialize_user_info
 
 from friends.services import friendships
 
@@ -23,8 +23,7 @@ def all_friends(request):
     friends = friendships.get_all(request.user)
     if not friends:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    serializer = UserNoPasswordSerializer(friends, many=True)
-    return Response(serializer.data)
+    return Response(serialize_user_info(friends))
 
 
 @api_view(["GET"])

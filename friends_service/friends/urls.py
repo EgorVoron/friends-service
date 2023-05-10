@@ -9,7 +9,7 @@ urlpatterns = [
     path('requests/accept', views.accept),
     path('requests/decline', views.decline),
 
-    path('all_friends', views.all_friends),
+    path('all', views.all_friends),
     path('check_status', views.check_status),
     path('delete', views.delete)
 ]

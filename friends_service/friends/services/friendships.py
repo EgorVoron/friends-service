@@ -7,30 +7,22 @@ from friends.models import Friendship, FriendshipRequest, User
 
 
 def get_all(user: User) -> QuerySet | None:
-    right_friends, left_friends = None, None
+    left_friends, right_friends = [], []
     try:
-        right_friends = (
-            Friendship.objects.filter(friend_1=user).values("friend_2").annotate(friend=F("friend_2"))
-        )
-    except Friendship.DoesNotExist:
+        left_friends = Friendship.objects.filter(friend_1=user).values_list("friend_2__id", "friend_2__username")
+    except FriendshipRequest.DoesNotExist:
         pass
     try:
-        left_friends = (
-            Friendship.objects.filter(friend_2=user).values("friend_1").annotate(friend=F("friend_1"))
-        )
-    except Friendship.DoesNotExist:
+        right_friends = Friendship.objects.filter(friend_2=user).values_list("friend_1__id", "friend_1__username")
+    except FriendshipRequest.DoesNotExist:
         pass
-    if not right_friends and not left_friends:
-        return None
-
     if not right_friends:
         friends = left_friends
     elif not left_friends:
         friends = right_friends
     else:
         friends = left_friends | right_friends
-    friends_ids = list(map(lambda x: x["friend"], friends))
-    return User.objects.filter(id__in=friends_ids).values("id", "username")
+    return friends
 
 
 class FriendshipStatus(str, Enum):

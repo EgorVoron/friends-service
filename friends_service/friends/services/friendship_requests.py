@@ -3,17 +3,19 @@ from django.db.models import Q, QuerySet
 from friends.models import Friendship, FriendshipRequest, User
 
 
-def get_incoming(from_user: User) -> QuerySet | None:
+def get_incoming(to_user: User) -> QuerySet | None:
     try:
-        queryset: QuerySet = FriendshipRequest.objects.filter(from_user=from_user)
+        queryset: QuerySet = FriendshipRequest.objects.filter(to_user=to_user).values_list("to_user__id",
+                                                                                           "to_user__username")
     except FriendshipRequest.DoesNotExist:
         return None
     return queryset
 
 
-def get_outgoing(to_user: User) -> QuerySet | None:
+def get_outgoing(from_user: User) -> QuerySet | None:
     try:
-        queryset: QuerySet = FriendshipRequest.objects.filter(to_user=to_user)
+        queryset: QuerySet = FriendshipRequest.objects.filter(from_user=from_user).values_list("from_user__id",
+                                                                                               "from_user__username")
     except FriendshipRequest.DoesNotExist:
         return None
     return queryset
@@ -43,8 +45,6 @@ def send(from_user: User, to_id: int):
 
 
 def accept(from_user: User, to_id: int):
-    # maybe i should make accept/decline by friendship request's id
-    # but it would be less user-friendly
     try:
         to_user: User = User.objects.get(id=to_id)
     except User.DoesNotExist:

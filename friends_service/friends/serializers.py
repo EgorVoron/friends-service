@@ -1,8 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import FriendshipRequest
-
 UserModel = get_user_model()
 
 
@@ -25,16 +23,6 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
-class FriendshipRequestsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FriendshipRequest
-        fields = (
-            "id",
-            "from_id",
-            "to_id"
-        )
-
-
 class UserNoPasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
@@ -42,3 +30,7 @@ class UserNoPasswordSerializer(serializers.ModelSerializer):
             "id",
             "username"
         )
+
+
+def serialize_user_info(queryset):
+    return [{'id': user[0], 'username': user[1]} for user in queryset]
