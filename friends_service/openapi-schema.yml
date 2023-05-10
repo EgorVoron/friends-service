@@ -1,42 +1,124 @@
 openapi: 3.0.2
 info:
   title: 'friends-service'
-  description: "Сервис для добавления людей в друзья"
+  description: "Сервис для добавления людей в друзья. Все руты /api требуют токен юзера"
   version: ''
 paths:
   /api/v1/friends/requests/incoming:
     get:
       operationId: listincoming_requests
-      description: 'Входящие заявки в друзья'
+      description: 'Incoming friendship requests'
       parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserNoPassword'
+          description: 'OK'
+        '204':
+          description: 'No incoming requests'
+      tags:
+      - api/v1/friends/requests
+  /api/v1/friends/requests/outgoing:
+    get:
+      operationId: listoutgoing_requests
+      description: 'Outgoing friendship requests'
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserNoPassword'
+          description: 'OK'
+        '204':
+          description: 'No outgoing requests'
+      tags:
+      - api/v1/friends/requests
+  /api/v1/friends/requests/send:
+    post:
+      operationId: createsend_request
+      description: 'Send friendship request'
+      parameters:
+        - name: id
+          in: query
+          description: 'id of user to send request to'
+          required: true
+          schema:
+            type: integer
       responses:
         '201':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Request'
-          description: ''
-      tags:
-        - api
-  /api/v1/friends/requests/outgoing:
-    get:
-      operationId: listoutgoing_requests
-      description: ''
-      parameters: []
-      responses:
-        '200':
+                $ref: '#/components/schemas/Result'
+          description: 'OK'
+        '400':
           content:
             application/json:
               schema:
-                type: array
-                items: {}
-          description: ''
+                $ref: '#/components/schemas/Result'
       tags:
-        - api
-  /api/v1/friends/all_friends:
+        - api/v1/friends/requests
+  /api/v1/friends/requests/accept:
+    post:
+      operationId: createaccept_request
+      description: 'Accept friendship request'
+      parameters:
+        - name: id
+          in: query
+          description: 'id of user to accept request from'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+          description: 'OK'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+      tags:
+        - api/v1/friends/requests
+  /api/v1/friends/requests/decline:
+    post:
+      operationId: createdecline_request
+      description: 'Decline friendship request'
+      parameters:
+        - name: id
+          in: query
+          description: 'id of user to decline request from'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+          description: 'OK'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+      tags:
+        - api/v1/friends/requests
+  /api/v1/friends/all:
     get:
       operationId: listall_friends
-      description: ''
+      description: 'Get all friends'
       parameters: []
       responses:
         '200':
@@ -44,25 +126,65 @@ paths:
             application/json:
               schema:
                 type: array
-                items: {}
-          description: ''
+                items:
+                  $ref: '#/components/schemas/Result'
+          description: 'Friends'
+        '204':
+          description: 'No friends'
       tags:
-        - api
+      - api/v1/friends
   /api/v1/friends/check_status:
     get:
       operationId: listcheck_status
-      description: ''
-      parameters: []
+      description: 'Check if user is friend/requested/etc.'
+      parameters:
+        - name: id
+          in: query
+          description: 'id of user to check info about'
+          required: true
+          schema:
+            type: integer
       responses:
-        '200':
+        '201':
           content:
             application/json:
               schema:
-                type: array
-                items: {}
-          description: ''
+                $ref: '#/components/schemas/Result'
+          description: 'OK'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+          description: 'Not OK'
       tags:
-        - api
+      - api/v1/friends
+  /api/v1/friends/delete:
+    delete:
+      operationId: destroydelete
+      description: 'Delete from friends'
+      parameters:
+        - name: id
+          in: query
+          description: 'id of user to check info about'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+          description: 'OK'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+          description: 'Not OK'
+      tags:
+        - api/v1/friends
   /auth/register:
     post:
       operationId: createUser
@@ -87,7 +209,7 @@ paths:
                 $ref: '#/components/schemas/User'
           description: ''
       tags:
-        - auth
+      - auth
   /auth/token/login:
     post:
       operationId: createAuthToken
@@ -112,97 +234,33 @@ paths:
                 $ref: '#/components/schemas/AuthToken'
           description: ''
       tags:
-        - auth
-  /api/v1/friends/requests/send:
-    post:
-      operationId: createsend_request
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema: {}
-          application/x-www-form-urlencoded:
-            schema: {}
-          multipart/form-data:
-            schema: {}
-      responses:
-        '201':
-          content:
-            application/json:
-              schema: {}
-          description: ''
-      tags:
-        - api
-  /api/v1/friends/requests/accept:
-    post:
-      operationId: createaccept
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema: {}
-          application/x-www-form-urlencoded:
-            schema: {}
-          multipart/form-data:
-            schema: {}
-      responses:
-        '201':
-          content:
-            application/json:
-              schema: {}
-          description: ''
-      tags:
-        - api
-  /api/v1/friends/requests/decline:
-    post:
-      operationId: createdecline
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema: {}
-          application/x-www-form-urlencoded:
-            schema: {}
-          multipart/form-data:
-            schema: {}
-      responses:
-        '201':
-          content:
-            application/json:
-              schema: {}
-          description: ''
-      tags:
-        - api
-  /api/v1/friends/delete:
-    delete:
-      operationId: destroydelete
-      description: ''
-      parameters: []
-      responses:
-        '204':
-          description: ''
-      tags:
-        - api
+      - auth
 components:
   schemas:
-    Request:
+    Result:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+    UserNoPassword:
       type: object
       properties:
         id:
           type: integer
           readOnly: true
-
+        username:
+          type: string
     User:
       type: object
       properties:
         id:
           type: integer
           readOnly: true
-        to_user:
-          type: int
+        username:
+          type: string
           description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
             only.
           pattern: ^[\w.@+-]+\z
@@ -211,8 +269,8 @@ components:
           type: string
           writeOnly: true
       required:
-        - username
-        - password
+      - username
+      - password
     AuthToken:
       type: object
       properties:
@@ -226,5 +284,5 @@ components:
           type: string
           readOnly: true
       required:
-        - username
-        - password
+      - username
+      - password
